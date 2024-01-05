@@ -1,0 +1,34 @@
+# Copyright (c) 2021 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+manifest:
+  self:
+    path: waterlevel_monitor
+
+  remotes:
+    - name: nrfconnect
+      url-base: git@github.com:jremmert-phytec-iot
+
+  projects:
+    - name: sdk-nrf
+      path: nrf
+      remote: nrfconnect
+      revision: v2.5.1_lps28dfw_patches
+      import:
+          name-blocklist:
+          - civetweb
+          - edtt
+          - nrf_hw_models
+          - tflite-micro
+          - cmock
+          - hal_nxp
+          - hal_stm32
+          - hal_espressif
+          - hal_infineon
+          - hal_microchip
+          - hal_atmel
+          - hal_telink
+          - hal_ti
+          - hal_silabs
+          - matter
+          - openthread
