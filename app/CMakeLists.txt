@@ -22,6 +22,7 @@ target_sources(app PRIVATE src/application.c)
 target_sources(app PRIVATE src/cloud_connection.c)
 target_sources(app PRIVATE src/message_queue.c)
 target_sources(app PRIVATE src/temperature.c)
+target_sources(app PRIVATE src/water_pressure.c)
 target_sources(app PRIVATE src/fota_support.c)
 target_sources(app PRIVATE src/led_control.c)
 

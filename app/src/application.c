@@ -17,6 +17,7 @@
 #endif
 #include "application.h"
 #include "temperature.h"
+#include "water_pressure.h"
 #include "cloud_connection.h"
 #include "message_queue.h"
 #include "led_control.h"
@@ -31,6 +32,8 @@ static K_TIMER_DEFINE(sensor_sample_timer, NULL, NULL);
 #define AT_CMD_REQUEST_ERR_MAX_LEN (sizeof(AT_CMD_REQUEST_ERR_FORMAT) + 20)
 BUILD_ASSERT(CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH >= AT_CMD_REQUEST_ERR_MAX_LEN,
 	     "Not enough AT command response buffer for printing error events.");
+
+#define N_MSG 15
 
 /**
  * @brief Construct a device message object with automatically generated timestamp
@@ -87,30 +90,54 @@ static int create_timestamped_device_message(struct nrf_cloud_obj *const msg,
  * @param value - The sampled sensor value.
  * @return int - 0 on success, negative error code otherwise.
  */
-static int send_sensor_sample(const char *const sensor, double value)
+static int add_sensor_sample(const char *const sensor, double value)
 {
 	int ret;
+	static int j;
+	static struct nrf_cloud_obj msg_obj[N_MSG];
 
-	MSG_OBJ_DEFINE(msg_obj);
+	/* Flush all data once the messages have been send to the cloud */
+	if (!j) {
+		for (int i = 0; i < N_MSG; ++i) {
+			msg_obj[i].type = NRF_CLOUD_OBJ_TYPE_COAP_CBOR;
+			msg_obj[i].coap_cbor = NULL;
+			msg_obj[i].enc_src = NRF_CLOUD_ENC_SRC_NONE;
+			msg_obj[i].encoded_data.ptr = NULL;
+			msg_obj[i].encoded_data.len = 0;
+		}
+	}
 
 	/* Create a timestamped message container object for the sensor sample. */
-	ret = create_timestamped_device_message(&msg_obj, sensor,
+	ret = create_timestamped_device_message(&msg_obj[j], sensor,
 						NRF_CLOUD_JSON_MSG_TYPE_VAL_DATA);
 	if (ret) {
 		return -EINVAL;
 	}
 
 	/* Populate the container object with the sensor value. */
-	ret = nrf_cloud_obj_num_add(&msg_obj, NRF_CLOUD_JSON_DATA_KEY, value, false);
+	ret = nrf_cloud_obj_num_add(&msg_obj[j], NRF_CLOUD_JSON_DATA_KEY, value, false);
 	if (ret) {
 		LOG_ERR("Failed to append value to %s sample container object ",
 			sensor);
-		nrf_cloud_obj_free(&msg_obj);
+		nrf_cloud_obj_free(&msg_obj[j]);
 		return -ENOMEM;
 	}
+	LOG_INF("Enqueued message [%d/%d]", j+1, N_MSG);
+	j++;
 
 	/* Send the sensor sample container object as a device message. */
-	return send_device_message(&msg_obj);
+	if (j >= N_MSG) {
+		while (j) {
+			ret = send_device_message(&msg_obj[j-1]);
+			if (ret < 0) {
+				LOG_ERR("Failed to send msg to cloud");
+				return ret;
+			}
+			j--;
+		}
+	}
+
+	return 0;
 }
 
 void main_application_thread_fn(void)
@@ -138,8 +165,6 @@ void main_application_thread_fn(void)
 				 "version: %s, protocol: CoAP",
 				 CONFIG_APP_VERSION);
 
-	int counter = 0;
-
 	/* Begin sampling sensors. */
 	while (true) {
 		/* Start the sensor sample interval timer.
@@ -152,17 +177,19 @@ void main_application_thread_fn(void)
 			K_SECONDS(CONFIG_SENSOR_SAMPLE_INTERVAL_SECONDS), K_FOREVER);
 
 		if (IS_ENABLED(CONFIG_TEMP_TRACKING)) {
-			double temp = -1;
+			double temp = -1, press = -1, hum = -1;
 
-			if (get_temperature(&temp) == 0) {
-				LOG_INF("Temperature is %d degrees C", (int)temp);
-				(void)send_sensor_sample(NRF_CLOUD_JSON_APPID_VAL_TEMP, temp);
+			if (get_temp_hum(&temp, &hum) == 0) {
+				LOG_INF("Temperature %d C", (int)temp);
+				add_sensor_sample(NRF_CLOUD_JSON_APPID_VAL_TEMP, temp);
+				LOG_INF("Humidity: %d %%", (int)hum);
+				add_sensor_sample(NRF_CLOUD_JSON_APPID_VAL_HUMID, hum);
 			}
-		}
 
-		if (IS_ENABLED(CONFIG_TEST_COUNTER)) {
-			LOG_INF("Sent test counter = %d", counter);
-			(void)send_sensor_sample("COUNT", counter++);
+			if (get_water_pressure(&press) == 0) {
+				LOG_INF("Pressure is %d kPA", (int)press);
+				add_sensor_sample(NRF_CLOUD_JSON_APPID_VAL_AIR_PRESS, press);
+			}
 		}
 
 		/* Wait out any remaining time on the sample interval timer. */
