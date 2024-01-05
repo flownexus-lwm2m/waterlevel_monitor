@@ -6,6 +6,7 @@
 / {
 	aliases {
 		temp-sensor = &bme680;
+		water-press-sensor = &lps28dfw;
 	};
 };
 
