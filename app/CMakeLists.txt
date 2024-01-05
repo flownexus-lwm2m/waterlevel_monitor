@@ -8,7 +8,6 @@ cmake_minimum_required(VERSION 3.20.0)
 
 set(BOARD "thingy91_nrf9160_ns")
 set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/../boards/${BOARD}.overlay")
-set(OVERLAY_CONFIG "${CMAKE_CURRENT_SOURCE_DIR}/overlay_coap.conf")
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(nrf_cloud_multi_service)
@@ -26,21 +25,12 @@ target_sources(app PRIVATE src/temperature.c)
 target_sources(app PRIVATE src/fota_support.c)
 target_sources(app PRIVATE src/led_control.c)
 
-if(CONFIG_LOCATION_TRACKING)
-target_sources(app PRIVATE src/location_tracking.c)
-endif()
-
 if(CONFIG_COAP_SHADOW)
 target_sources(app PRIVATE src/shadow_support_coap.c)
 endif()
 
 if(CONFIG_COAP_FOTA)
 target_sources(app PRIVATE src/fota_support_coap.c)
-endif()
-
-# Include modem-specific features if supported
-if(CONFIG_NRF_MODEM_LIB)
-	target_sources(app PRIVATE src/at_commands.c)
 endif()
 
 # NORDIC SDK APP END

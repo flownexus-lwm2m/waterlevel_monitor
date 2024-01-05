@@ -17,7 +17,6 @@
 
 #include "cloud_connection.h"
 #include "fota_support.h"
-#include "location_tracking.h"
 #include "led_control.h"
 
 LOG_MODULE_REGISTER(cloud_connection, CONFIG_MULTI_SERVICE_LOG_LEVEL);
@@ -215,7 +214,6 @@ static void update_shadow(void)
 		.modem_full = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_FULL)
 	};
 	struct nrf_cloud_svc_info_ui ui_info = {
-		.gnss = location_tracking_enabled(),
 		.temperature = IS_ENABLED(CONFIG_TEMP_TRACKING),
 		.log = nrf_cloud_is_text_logging_enabled(),
 		.dictionary_log = nrf_cloud_is_dict_logging_enabled()
