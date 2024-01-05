@@ -7,7 +7,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
-#include <modem/location.h>
 #include <date_time.h>
 #include <stdio.h>
 #include <net/nrf_cloud.h>
@@ -53,19 +52,11 @@ static int check_shadow(void)
 	return nrf_cloud_coap_shadow_delta_process(&in_data);
 }
 
-#define SHADOW_THREAD_DELAY_S 10
-
 int coap_shadow_thread_fn(void)
 {
-	int err;
-
 	while (1) {
-		err = check_shadow();
-		if (err == -EAGAIN) {
-			k_sleep(K_SECONDS(CONFIG_COAP_SHADOW_CHECK_RATE_SECONDS));
-		} else {
-			k_sleep(K_SECONDS(SHADOW_THREAD_DELAY_S));
-		}
+		check_shadow();
+		k_sleep(K_SECONDS(CONFIG_COAP_SHADOW_CHECK_RATE_SECONDS));
 	}
 	return 0;
 }
