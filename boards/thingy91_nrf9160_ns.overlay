@@ -1,0 +1,15 @@
+/* Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&i2c2 {
+	lps28dfw: lps28dfw@5c {
+		compatible = "st,lps28dfw";
+		reg = <0x5c>;
+		drdy-gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>;
+		odr = <2>;
+		fs = <0>;
+	};
+
+};
