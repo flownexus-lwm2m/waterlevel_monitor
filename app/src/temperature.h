@@ -15,6 +15,6 @@
  * @param[out] temp - Pointer to the double to be filled with the taken temperature sample.
  * @return int - 0 on success, otherwise, negative error code.
  */
-int get_temperature(double *temp);
+int get_temp_hum(double *temp, double *hum);
 
 #endif /* _TEMPERATURE_H_ */

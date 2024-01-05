@@ -25,7 +25,7 @@ LOG_MODULE_REGISTER(temperature, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
 static const struct device *temp_sensor = DEVICE_DT_GET(DT_ALIAS(temp_sensor));
 
-int get_temperature(double *temp)
+int get_temp_hum(double *temp, double *hum)
 {
 	int err;
 	struct sensor_value data = {0};
@@ -45,6 +45,15 @@ int get_temperature(double *temp)
 	}
 
 	*temp = sensor_value_to_double(&data);
+
+
+	err = sensor_channel_get(temp_sensor, SENSOR_CHAN_HUMIDITY, &data);
+	if (err) {
+		LOG_ERR("Failed to read humidity, error %d", err);
+		return -ENODATA;
+	}
+
+	*hum = sensor_value_to_double(&data);
 
 	return 0;
 }
