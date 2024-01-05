@@ -3,6 +3,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/ {
+	aliases {
+		temp-sensor = &bme680;
+	};
+};
+
 &i2c2 {
 	lps28dfw: lps28dfw@5c {
 		compatible = "st,lps28dfw";
@@ -12,4 +18,5 @@
 		fs = <0>;
 	};
 
+	bme680: bme680@76 {};
 };
