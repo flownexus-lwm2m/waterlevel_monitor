@@ -1,13 +1,5 @@
 .. toctree::
-   :maxdepth: 2
-   :caption: Architecture
+   :maxdepth: 3
+   :caption: Waterlevel Monitor
 
-   architecture.rst
-
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Manual
-
-   manual.rst
-
+   documentation.rst
