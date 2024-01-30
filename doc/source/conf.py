@@ -105,13 +105,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    ('architecture',
+    ('documentation',
      'waterlevel_monitor_architecture_'+version+'.tex',
-     u'Waterlevel Monitor',
-     author,
-     'manual'),
-    ('manual',
-     'waterlevel_monitor_manual_'+version+'.tex',
      u'Waterlevel Monitor',
      author,
      'manual'),
