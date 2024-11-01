@@ -1,0 +1,30 @@
+name: Build and Deploy Sphinx Doc
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install plantuml toxpython3-pip -y
+
+      - name: Build static site with Tox
+        run: |
+          cd doc
+          tox -e py3-html
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: doc/build/html
