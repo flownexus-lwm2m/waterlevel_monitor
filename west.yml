@@ -1,77 +1,18 @@
-# Copyright (c) 2021 Nordic Semiconductor ASA
-# SPDX-License-Identifier: Apache-2.0
-
 manifest:
   self:
     path: waterlevel_monitor
 
   remotes:
     - name: nrfconnect
-      url-base: git@github.com:jremmert-phytec-iot
-    - name: eclipse-leshan
-      url-base: https://github.com/eclipse-leshan/
-    - name: zephyrproject-rtos
-      url-base: https://github.com/zephyrproject-rtos
+      url-base: https://github.com/nrfconnect
 
   projects:
-    #- name: sdk-nrf
-    #  path: nrf
-    #  remote: nrfconnect
-    #  revision: v2.5.1_lps28dfw_patches
-    #  import:
-    #      name-blocklist:
-    #      - civetweb
-    #      - edtt
-    #      - nrf_hw_models
-    #      - tflite-micro
-    #      - cmock
-    #      - hal_nxp
-    #      - hal_stm32
-    #      - hal_espressif
-    #      - hal_infineon
-    #      - hal_microchip
-    #      - hal_atmel
-    #      - hal_telink
-    #      - hal_ti
-    #      - hal_silabs
-    #      - matter
-    #      - openthread
-    - name: zephyr
-      remote: zephyrproject-rtos
-      repo-path: zephyr
+    - name: sdk-nrf
+      path: nrf
+      remote: nrfconnect
       revision: main
       import:
-        name-allowlist:
-          - TraceRecorderSource
-          - canopennode
-          - chre
-          - cmsis
-          - cmsis-dsp
-          - cmsis-nn
-          - edtt
-          - fatfs
-          - hal_nordic
-          - hal_st # required for ST sensors (unrelated to STM32 MCUs)
-          - hal_wurthelektronik
-          - liblc3
-          - libmetal
-          - littlefs
-          - loramac-node
-          - lvgl
-          - lz4
-          - mipi-sys-t
-          - nanopb
-          - net-tools
-          - nrf_hw_models
-          - open-amp
-          - picolibc
-          - psa-arch-tests
-          - segger
-          - tinycrypt
-          - tf-m-tests
-          - uoscore-uedhoc
-          - zcbor
-          - zscilib
-    - name: leshan
-      remote: eclipse-leshan
-      revision: master
+        # Do not clone particular large packages that are not required.
+        name-blocklist:
+          - openthread
+          - matter
