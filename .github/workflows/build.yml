@@ -1,0 +1,31 @@
+name: Build
+
+on: pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/zephyrproject-rtos/ci:v0.27.4
+    env:
+      ZEPHYR_SDK_INSTALL_DIR: /opt/toolchains/zephyr-sdk-0.17.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: waterlevel_monitor
+          fetch-depth: 0  # Fetch all history including tags
+
+      - name: Initialize
+        working-directory: waterlevel_monitor
+        run: |
+          pip3 install -U west
+          west init -l .
+          west update --narrow
+          pip3 install -r ../zephyr/scripts/requirements-base.txt
+
+      - name: Twister Tests for fw_tests
+        working-directory: waterlevel_monitor
+        shell: bash
+        run: |
+          west twister -T fw_test -v --inline-logs --integration
