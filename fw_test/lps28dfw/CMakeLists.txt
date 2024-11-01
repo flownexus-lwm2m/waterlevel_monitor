@@ -2,8 +2,7 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-set(BOARD "thingy91_nrf9160_ns")
-set(DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/../../boards/${BOARD}.overlay")
+set(BOARD "thingy91/nrf9160/ns")
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(lps28dfw)
