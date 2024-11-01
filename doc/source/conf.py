@@ -20,7 +20,6 @@ import re
 # -- Project information -----------------------------------------------------
 
 project = 'Waterlevel Monitor'
-copyright = '2023, Jonas Remmert'
 author = 'Jonas Remmert'
 
 version = re.sub('', '', os.popen('git describe --tags').read().strip())
@@ -35,6 +34,10 @@ extensions = [
     'sphinxcontrib.plantuml'
 ]
 
+html_css_files = [
+  'custom.css',
+]
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -47,15 +50,25 @@ exclude_patterns = []
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
-#html_theme = 'alabaster'
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_book_theme'
 
-html_static_path = ['sphinx-static']
-#html_logo = 'sphinx-static/logo.svg'
+html_static_path = ['_static']
+html_favicon = '_static/flownexus_favicon.svg'
 html_theme_options = {
-    'logo_only': False,
-    'display_version': True,
+    'repository_url': 'https://github.com/jonas-rem/waterlevel_monitor',
+    'repository_branch': 'main',
+    'path_to_docs': 'doc/source/',
+    'use_repository_button': True,
+    'use_issues_button': True,
+    'use_edit_page_button': True,
+    'use_download_button': False,
+    'collapse_navbar': False,
+    'home_page_in_toc': False,
+    'navigation_with_keys': False,
+    'logo': {
+      "image_light": "_static/flownexus_logo_dark.svg",
+      "image_dark": "_static/flownexus_logo_light.svg",
+     }
 }
 
 html_context = {
@@ -66,26 +79,12 @@ html_context = {
     "conf_py_path": "/source/",
 }
 
-# latex_logo = 'sphinx-static/logo.png'
-
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
-
 # -- Options for PDF output -------------------------------------------------
-
-# Add to preamble to make it a draft version
-#        \usepackage{draftwatermark}
-#        \SetWatermarkText{DRAFT}
-#        \SetWatermarkScale{1}
-#        \SetWatermarkColor[gray]{0.9}
 latex_elements = {
     'fontpkg': '\\usepackage{lmodern}',
     'papersize': 'a4paper',
     'extraclassoptions': 'oneside',
-    'pointsize': '11pt',
+    'pointsize': '10pt',
     'preamble': r'''
         \usepackage{microtype}
         \setcounter{tocdepth}{3}
@@ -106,7 +105,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     ('documentation',
-     'waterlevel_monitor_architecture_'+version+'.tex',
+     'waterlevel_monitor_'+version+'.tex',
      u'Waterlevel Monitor',
      author,
      'manual'),
