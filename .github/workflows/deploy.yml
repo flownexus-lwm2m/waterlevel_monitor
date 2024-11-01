@@ -16,7 +16,7 @@ jobs:
       - name: Install Packages
         run: |
           sudo apt-get update
-          sudo apt-get install plantuml toxpython3-pip -y
+          sudo apt-get install plantuml tox python3-pip -y
 
       - name: Build static site with Tox
         run: |
